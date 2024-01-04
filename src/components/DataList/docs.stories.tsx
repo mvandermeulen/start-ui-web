@@ -1,469 +1,241 @@
 import {
   Avatar,
-  Badge,
-  Box,
-  Code,
-  HStack,
+  Button,
   LinkBox,
   LinkOverlay,
   Menu,
   MenuButton,
-  MenuDivider,
   MenuItem,
   MenuList,
-  SimpleGrid,
+  Portal,
   Stack,
+  Tag,
+  TagLabel,
+  TagLeftIcon,
   Text,
+  Wrap,
 } from '@chakra-ui/react';
-import { FiCopy, FiEdit, FiTrash2, FiUserPlus } from 'react-icons/fi';
+import { LuCheck, LuPenLine, LuPlus, LuX } from 'react-icons/lu';
 
 import { ActionsButton } from '@/components/ActionsButton';
 import { Icon } from '@/components/Icons';
-import {
-  Pagination,
-  PaginationButtonFirstPage,
-  PaginationButtonLastPage,
-  PaginationButtonNextPage,
-  PaginationButtonPrevPage,
-  PaginationInfo,
-} from '@/components/Pagination';
 
 import {
   DataList,
-  DataListAccordion,
-  DataListAccordionButton,
-  DataListAccordionIcon,
-  DataListAccordionPanel,
   DataListCell,
-  DataListFooter,
-  DataListHeader,
+  DataListEmptyState,
+  DataListErrorState,
+  DataListLoadingState,
   DataListRow,
-} from './index';
+  DataListText,
+  DataListTextHeader,
+} from '.';
 
 export default {
   title: 'Components/DataList',
 };
 
+const data = [
+  {
+    id: 1,
+    name: 'Jane Cooper',
+    email: 'jane.cooper@example.com',
+    job: 'Regional Paradigm Technician',
+    department: 'Optimization',
+    status: 'active',
+    role: 'Admin',
+    wallet: 42,
+  },
+  {
+    id: 2,
+    name: 'Cody Fisher',
+    email: 'cody.fisher@example.com',
+    job: 'Product Directives Officer',
+    department: 'Intranet',
+    status: 'active',
+    role: 'Owner',
+    wallet: 142,
+  },
+  {
+    id: 3,
+    name: 'Esther Howard',
+    email: 'esther.howard@example.com',
+    job: 'Forward Response Developer',
+    department: 'Directives',
+    status: 'inactive',
+    role: 'Member',
+    wallet: 23,
+  },
+  {
+    id: 4,
+    name: 'Emily Esther',
+    email: 'emily.esther@example.com',
+    job: 'Forward Response Developer',
+    department: 'Directives',
+    status: 'inactive',
+    role: 'Member',
+    wallet: 132,
+  },
+] as const;
+
 export const Default = () => (
-  <Stack spacing="6">
-    <Text>
-      An DataList is composed of Header, Rows and Cells. To link Cells with
-      columns, each <Code>{`<DataListCell />`}</Code> must have a{' '}
-      <Code>{`colName="column-name"`}</Code> property.
-    </Text>
-    <DataList>
-      <DataListHeader>
-        <DataListCell colName="colA">Header A</DataListCell>
-        <DataListCell colName="colB">Header B</DataListCell>
-        <DataListCell colName="colC">Header C</DataListCell>
-      </DataListHeader>
-      <DataListRow>
-        <DataListCell colName="colA">Row 1 - Column A</DataListCell>
-        <DataListCell colName="colB">Row 1 - Column B</DataListCell>
-        <DataListCell colName="colC">Row 1 - Column C</DataListCell>
-      </DataListRow>
-      <DataListRow>
-        <DataListCell colName="colA">Row 2 - Column A</DataListCell>
-        <DataListCell colName="colB">Row 2 - Column B</DataListCell>
-        <DataListCell colName="colC">Row 2 - Column C</DataListCell>
-      </DataListRow>
-    </DataList>
-  </Stack>
-);
-
-export const ColumnSizes = () => (
-  <Stack spacing="6">
-    <Text>
-      Apply a <Code>{`colWidth`}</Code> on the <Code>{`<DataListCell />`}</Code>{' '}
-      of the column in the <Code>{`<DataListHeader />`}</Code> component to
-      control the columns width.
-    </Text>
-    <DataList>
-      <DataListHeader>
-        <DataListCell colName="colA" colWidth="3" bg="rgba(0, 0, 0, 0.02)">
-          <Code>{`colWidth="3"`}</Code>
+  <DataList>
+    {data.map((user) => (
+      <DataListRow key={user.id} as={LinkBox} withHover>
+        <DataListCell w="auto">
+          <Avatar size="sm" name={user.name} />
         </DataListCell>
-        <DataListCell colName="colB">Header</DataListCell>
-      </DataListHeader>
-      <DataListRow>
-        <DataListCell colName="colA">Cell</DataListCell>
-        <DataListCell colName="colB">Cell</DataListCell>
-      </DataListRow>
-      <DataListRow>
-        <DataListCell colName="colA">Cell</DataListCell>
-        <DataListCell colName="colB">Cell</DataListCell>
-      </DataListRow>
-    </DataList>
-    <Text>
-      Set a relative <Code>{`colWidth="3"`}</Code> or{' '}
-      <Code>{`colWidth={3}`}</Code> to allow the column to take 3 times the
-      default size.
-    </Text>
-    <DataList>
-      <DataListHeader>
-        <DataListCell colName="colA" colWidth="10rem" bg="rgba(0, 0, 0, 0.02)">
-          <Code>{`colWidth="10rem"`}</Code>
+        <DataListCell>
+          <DataListText fontWeight="bold">
+            <LinkOverlay href="#">{user.name}</LinkOverlay>
+          </DataListText>
+          <DataListText color="text-dimmed">{user.email}</DataListText>
         </DataListCell>
-        <DataListCell colName="colB">Header</DataListCell>
-      </DataListHeader>
-      <DataListRow>
-        <DataListCell colName="colA">Cell</DataListCell>
-        <DataListCell colName="colB">Cell</DataListCell>
-      </DataListRow>
-      <DataListRow>
-        <DataListCell colName="colA">Cell</DataListCell>
-        <DataListCell colName="colB">Cell</DataListCell>
-      </DataListRow>
-    </DataList>
-    <Text>
-      Set css width <Code>{`colWidth="10rem"`}</Code> or{' '}
-      <Code>{`colWidth="25%"`}</Code> for allowing the column to take the given
-      size.
-      <br />
-      You can use responsive value for <Code>{`colWidth`}</Code> like this{' '}
-      <Code>{`colWidth={{ base: 1, md: '10rem' }}`}</Code>
-    </Text>
-  </Stack>
-);
-
-export const ColumnVisibility = () => (
-  <Stack spacing="6">
-    <Text>
-      Apply a <Code>{`isVisible`}</Code> on the{' '}
-      <Code>{`<DataListCell />`}</Code> of the column in the{' '}
-      <Code>{`<DataListHeader />`}</Code> component to control the columns
-      visibility.
-      <br />
-      You can use responsive value for <Code>{`isVisible`}</Code> like this{' '}
-      <Code>{`isVisible={{ base: false, md: true }}`}</Code>
-    </Text>
-    <DataList>
-      <DataListHeader>
-        <DataListCell colName="colA" isVisible={{ base: false, md: true }}>
-          <Code>{`isVisible={{ base: false, md: true }}`}</Code>
+        <DataListCell flex={0.8} display={{ base: 'none', sm: 'flex' }}>
+          <DataListText color="text-dimmed">{user.job}</DataListText>
         </DataListCell>
-        <DataListCell colName="colB" isVisible={{ base: true, md: false }}>
-          <Code>{`isVisible={{ base: true, md: false }}`}</Code>
+        <DataListCell flex={0.4} display={{ base: 'none', md: 'flex' }}>
+          <DataListText color="text-dimmed">{user.role}</DataListText>
         </DataListCell>
-      </DataListHeader>
-      <DataListRow>
-        <DataListCell colName="colA">Only Large Screen</DataListCell>
-        <DataListCell colName="colB">Only Small Screen</DataListCell>
+        <DataListCell
+          w={{ base: 'auto', md: '5rem', lg: '8rem' }}
+          align="center"
+        >
+          <ExampleStatus status={user.status} />
+        </DataListCell>
+        <DataListCell w="auto" p={0}>
+          <ExampleMenu />
+        </DataListCell>
       </DataListRow>
-      <DataListRow>
-        <DataListCell colName="colA">Only Large Screen</DataListCell>
-        <DataListCell colName="colB">Only Small Screen</DataListCell>
-      </DataListRow>
-    </DataList>
-  </Stack>
-);
-
-export const NoHover = () => (
-  <DataList isHover={false}>
-    <DataListHeader>
-      <DataListCell colName="colA">Header A</DataListCell>
-      <DataListCell colName="colB">Header B</DataListCell>
-      <DataListCell colName="colC">Header C</DataListCell>
-    </DataListHeader>
-    <DataListRow>
-      <DataListCell colName="colA">Row 1 - Column A</DataListCell>
-      <DataListCell colName="colB">Row 1 - Column B</DataListCell>
-      <DataListCell colName="colC">Row 1 - Column C</DataListCell>
-    </DataListRow>
-    <DataListRow>
-      <DataListCell colName="colA">Row 2 - Column A</DataListCell>
-      <DataListCell colName="colB">Row 2 - Column B</DataListCell>
-      <DataListCell colName="colC">Row 2 - Column C</DataListCell>
-    </DataListRow>
+    ))}
   </DataList>
 );
 
-export const Complete = () => {
-  const users = [
-    {
-      name: 'Jane Cooper',
-      email: 'jane.cooper@example.com',
-      job: 'Regional Paradigm Technician',
-      department: 'Optimization',
-      status: 'Active',
-      role: 'Admin',
-    },
-    {
-      name: 'Cody Fisher',
-      email: 'cody.fisher@example.com',
-      job: 'Product Directives Officer',
-      department: 'Intranet',
-      status: 'Active',
-      role: 'Owner',
-    },
-    {
-      name: 'Esther Howard',
-      email: 'esther.howard@example.com',
-      job: 'Forward Response Developer',
-      department: 'Directives',
-      status: 'Inactive',
-      role: 'Member',
-    },
-  ];
+export const WithHeaders = () => (
+  <DataList>
+    <DataListRow>
+      <DataListCell>
+        <DataListTextHeader>Name</DataListTextHeader>
+      </DataListCell>
+      <DataListCell>
+        <DataListTextHeader>Email</DataListTextHeader>
+      </DataListCell>
+      <DataListCell align="end">
+        <DataListTextHeader>Wallet</DataListTextHeader>
+      </DataListCell>
+      <DataListCell align="center">
+        <DataListTextHeader>Role</DataListTextHeader>
+      </DataListCell>
+    </DataListRow>
+    {data.map((user) => (
+      <DataListRow key={user.id}>
+        <DataListCell>
+          <DataListText fontWeight="bold">{user.name}</DataListText>
+        </DataListCell>
+        <DataListCell>
+          <DataListText>{user.email}</DataListText>
+        </DataListCell>
+        <DataListCell align="end">
+          <DataListText>{user.wallet}$</DataListText>
+        </DataListCell>
+        <DataListCell align="center">
+          <DataListText color="text-dimmed">{user.role}</DataListText>
+        </DataListCell>
+      </DataListRow>
+    ))}
+  </DataList>
+);
+
+export const LoadingState = () => {
   return (
     <DataList>
-      <DataListHeader isVisible={{ base: false, md: true }}>
-        <DataListCell colName="name" colWidth="1.5">
-          Name
-        </DataListCell>
-        <DataListCell colName="title" isVisible={{ base: false, md: true }}>
-          Title
-        </DataListCell>
-        <DataListCell
-          colName="status"
-          colWidth="0.6"
-          isVisible={{ base: false, md: true }}
-        >
-          Status
-        </DataListCell>
-        <DataListCell
-          colName="role"
-          colWidth="0.6"
-          isVisible={{ base: false, md: true }}
-        >
-          Role
-        </DataListCell>
-        <DataListCell colName="actions" colWidth="4rem" align="flex-end" />
-      </DataListHeader>
-      {users.map((item, index) => (
-        <DataListRow
-          as={LinkBox}
-          key={index}
-          isDisabled={item.status === 'Inactive'}
-        >
-          <DataListCell colName="name">
-            <HStack maxW="100%">
-              <Avatar size="sm" name={item.name} mx="2" />
-              <Box minW="0">
-                <Text noOfLines={1} maxW="full" fontWeight="bold">
-                  {item.status !== 'Inactive' ? (
-                    <LinkOverlay href="#">{item.name}</LinkOverlay>
-                  ) : (
-                    item.name
-                  )}
-                </Text>
-                <Text
-                  noOfLines={1}
-                  maxW="full"
-                  fontSize="sm"
-                  color="gray.600"
-                  _dark={{ color: 'gray.300' }}
-                >
-                  {item.email}
-                </Text>
-              </Box>
-            </HStack>
-          </DataListCell>
-          <DataListCell colName="title" fontSize="sm">
-            <Text noOfLines={1} maxW="full">
-              {item.job}
-            </Text>
-            <Text
-              noOfLines={1}
-              maxW="full"
-              color="gray.600"
-              _dark={{ color: 'gray.300' }}
-            >
-              {item.department}
-            </Text>
-          </DataListCell>
-          <DataListCell colName="status">
-            <Badge
-              size="sm"
-              colorScheme={item.status === 'Active' ? 'success' : 'gray'}
-            >
-              {item.status}
-            </Badge>
-          </DataListCell>
-          <DataListCell colName="role" fontSize="sm">
-            <Text
-              noOfLines={1}
-              maxW="full"
-              color="gray.600"
-              _dark={{ color: 'gray.300' }}
-            >
-              {item.role}
-            </Text>
-          </DataListCell>
-          <DataListCell colName="actions">
-            <Menu isLazy placement="left-start">
-              <MenuButton
-                as={ActionsButton}
-                isDisabled={item.status === 'Inactive'}
-              />
-              <MenuList>
-                <MenuItem
-                  icon={<Icon icon={FiEdit} fontSize="lg" color="gray.400" />}
-                >
-                  Edit
-                </MenuItem>
-                <MenuItem
-                  icon={<Icon icon={FiCopy} fontSize="lg" color="gray.400" />}
-                >
-                  Duplicate
-                </MenuItem>
-                <MenuItem
-                  icon={
-                    <Icon icon={FiUserPlus} fontSize="lg" color="gray.400" />
-                  }
-                >
-                  Share
-                </MenuItem>
-                <MenuDivider />
-                <MenuItem
-                  icon={<Icon icon={FiTrash2} fontSize="lg" color="gray.400" />}
-                >
-                  Delete
-                </MenuItem>
-              </MenuList>
-            </Menu>
-          </DataListCell>
-        </DataListRow>
-      ))}
-      <DataListFooter>
-        <Pagination
-          isLoadingPage={false}
-          setPage={() => undefined}
-          page={1}
-          pageSize={10}
-          totalItems={89}
-        >
-          <PaginationButtonFirstPage />
-          <PaginationButtonPrevPage />
-          <PaginationInfo flex="1" />
-          <PaginationButtonNextPage />
-          <PaginationButtonLastPage />
-        </Pagination>
-      </DataListFooter>
+      <DataListLoadingState />
     </DataList>
   );
 };
 
-export const CompleteWithCollapse = () => {
-  const users = [
-    {
-      name: 'Jane Cooper',
-      email: 'jane.cooper@example.com',
-      job: 'Regional Paradigm Technician',
-      department: 'Optimization',
-      status: 'Active',
-      role: 'Admin',
-    },
-    {
-      name: 'Cody Fisher',
-      email: 'cody.fisher@example.com',
-      job: 'Product Directives Officer',
-      department: 'Intranet',
-      status: 'Active',
-      role: 'Owner',
-    },
-    {
-      name: 'Esther Howard',
-      email: 'esther.howard@example.com',
-      job: 'Forward Response Developer',
-      department: 'Directives',
-      status: 'Inactive',
-      role: 'Member',
-    },
-  ];
+export const EmptyState = () => {
   return (
-    <DataList defaultIndex={[0]}>
-      <DataListHeader isVisible={{ base: false, md: true }}>
-        <DataListCell colName="name" colWidth="1.5">
-          Name
-        </DataListCell>
-        <DataListCell
-          colName="status"
-          colWidth="0.6"
-          isVisible={{ base: false, md: true }}
+    <Stack>
+      <DataList>
+        <DataListEmptyState />
+      </DataList>
+      <DataList>
+        <DataListEmptyState searchTerm="Admin" />
+      </DataList>
+      <DataList>
+        <DataListEmptyState>
+          <Wrap spacingX={2} spacingY={1}>
+            <Text alignSelf="center">Let&apos;s create your first user</Text>
+            <Button
+              variant="ghost"
+              colorScheme="info"
+              size="sm"
+              leftIcon={<LuPlus />}
+            >
+              Create User
+            </Button>
+          </Wrap>
+        </DataListEmptyState>
+      </DataList>
+    </Stack>
+  );
+};
+export const ErrorState = () => {
+  return (
+    <Stack>
+      <DataList>
+        <DataListErrorState />
+      </DataList>
+      <DataList>
+        <DataListErrorState retry={() => alert('Retry')} />
+      </DataList>
+      <DataList>
+        <DataListErrorState
+          title="Failed to load the users"
+          retry={() => alert('Retry')}
         >
-          Status
-        </DataListCell>
-        <DataListCell colName="actions" colWidth="2rem" align="flex-end" />
-      </DataListHeader>
-      {users.map((item, index) => (
-        <DataListAccordion key={index} isDisabled={item.status === 'Inactive'}>
-          <DataListRow
-            as={DataListAccordionButton}
-            isDisabled={item.status === 'Inactive'}
+          Something wrong happen, please retry or contact the administator
+        </DataListErrorState>
+      </DataList>
+    </Stack>
+  );
+};
+
+const ExampleStatus = ({ status }: { status: 'active' | 'inactive' }) => {
+  return (
+    <Tag
+      size="sm"
+      colorScheme={status === 'active' ? 'success' : 'warning'}
+      gap={1}
+      justifyContent="center"
+      px={{ base: 0, md: 2 }}
+    >
+      <TagLeftIcon as={status === 'active' ? LuCheck : LuX} mr={0} />
+      <TagLabel
+        lineHeight={1}
+        display={{ base: 'none', md: 'inline' }}
+        whiteSpace="nowrap"
+      >
+        {status === 'active' ? 'Active' : 'Inactive'}
+      </TagLabel>
+    </Tag>
+  );
+};
+
+const ExampleMenu = () => {
+  return (
+    <Menu isLazy placement="left-start">
+      <MenuButton as={ActionsButton} />
+      <Portal>
+        <MenuList>
+          <MenuItem
+            icon={<Icon icon={LuPenLine} fontSize="lg" color="gray.400" />}
           >
-            <DataListCell colName="name">
-              <HStack maxW="100%">
-                <Avatar size="sm" name={item.name} mx="2" />
-                <Box minW="0">
-                  <Text noOfLines={1} maxW="full" fontWeight="bold">
-                    {item.name}
-                  </Text>
-                  <Text
-                    noOfLines={1}
-                    maxW="full"
-                    fontSize="sm"
-                    color="gray.600"
-                    _dark={{ color: 'gray.300' }}
-                  >
-                    {item.email}
-                  </Text>
-                </Box>
-              </HStack>
-            </DataListCell>
-            <DataListCell colName="status">
-              <Badge
-                size="sm"
-                colorScheme={item.status === 'Active' ? 'success' : 'gray'}
-              >
-                {item.status}
-              </Badge>
-            </DataListCell>
-            <DataListCell colName="actions">
-              <DataListAccordionIcon />
-            </DataListCell>
-          </DataListRow>
-          <DataListAccordionPanel>
-            <SimpleGrid columns={{ base: 2, md: 3, lg: 4 }} spacing={4}>
-              <Box fontSize="sm">
-                <Text color="gray.600" _dark={{ color: 'gray.300' }}>
-                  Label
-                </Text>
-                <Text>Value</Text>
-              </Box>
-              <Box fontSize="sm">
-                <Text color="gray.600" _dark={{ color: 'gray.300' }}>
-                  Label
-                </Text>
-                <Text>Value</Text>
-              </Box>
-              <Box fontSize="sm">
-                <Text color="gray.600" _dark={{ color: 'gray.300' }}>
-                  Label
-                </Text>
-                <Text>Value</Text>
-              </Box>
-              <Box fontSize="sm">
-                <Text color="gray.600" _dark={{ color: 'gray.300' }}>
-                  Label
-                </Text>
-                <Text>Value</Text>
-              </Box>
-              <Box fontSize="sm" gridColumn="1/-1">
-                <Text color="gray.600" _dark={{ color: 'gray.300' }}>
-                  Comment
-                </Text>
-                <Text>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Distinctio atque cupiditate dicta sed est nesciunt dignissimos
-                  dolor nam. Nemo quisquam repudiandae tempora eius fugit
-                  laborum distinctio ex omnis recusandae sapiente.
-                </Text>
-              </Box>
-            </SimpleGrid>
-          </DataListAccordionPanel>
-        </DataListAccordion>
-      ))}
-    </DataList>
+            Edit
+          </MenuItem>
+        </MenuList>
+      </Portal>
+    </Menu>
   );
 };

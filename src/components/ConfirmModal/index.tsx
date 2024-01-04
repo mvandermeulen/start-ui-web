@@ -1,21 +1,18 @@
-import React, { ReactElement, ReactNode, useRef } from 'react';
+import React, { ReactElement, ReactNode } from 'react';
 
 import {
   Button,
   ButtonGroup,
   Heading,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalOverlay,
-  ModalProps,
-  Portal,
+  Stack,
+  Text,
   useDisclosure,
 } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 
-type ConfirmModalProps = Omit<ModalProps, 'isOpen' | 'onClose'> & {
+import { SheetModal, SheetModalProps } from '@/components/SheetModal';
+
+type ConfirmModalProps = Omit<SheetModalProps, 'isOpen' | 'onClose'> & {
   isEnabled?: boolean;
   children: ReactElement;
   title?: ReactNode;
@@ -40,12 +37,10 @@ export const ConfirmModal: React.FC<
   ...rest
 }) => {
   const { t } = useTranslation(['common', 'components']);
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const confirmModal = useDisclosure();
 
   const displayHeading =
     !title && !message ? t('components:confirmModal.heading') : title;
-
-  const initialFocusRef = useRef<HTMLButtonElement>(null);
 
   if (!isEnabled) {
     const childrenWithOnClick = React.cloneElement(children, {
@@ -55,50 +50,52 @@ export const ConfirmModal: React.FC<
   }
 
   const childrenWithOnOpen = React.cloneElement(children, {
-    onClick: onOpen,
+    onClick: confirmModal.onOpen,
   });
 
   return (
     <>
       {childrenWithOnOpen}
-      <Modal
-        isOpen={isOpen}
-        onClose={onClose}
-        size="xs"
-        initialFocusRef={initialFocusRef}
+      <SheetModal
+        isOpen={confirmModal.isOpen}
+        onClose={confirmModal.onClose}
         {...rest}
       >
-        <Portal>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalBody fontSize="sm">
-              {displayHeading && (
-                <Heading size="sm" mb={message ? 1 : 0}>
-                  {displayHeading}
-                </Heading>
-              )}
+        <Stack spacing={4}>
+          <Stack>
+            {displayHeading && (
+              <Heading size="sm" mb={message ? 1 : 0}>
+                {displayHeading}
+              </Heading>
+            )}
+            <Text fontSize="sm" color="gray.600" _dark={{ color: 'gray.300' }}>
               {message}
-            </ModalBody>
-            <ModalFooter>
-              <ButtonGroup justifyContent="space-between" w="full">
-                <Button onClick={onClose}>
-                  {cancelText ?? t('common:actions.cancel')}
-                </Button>
-                <Button
-                  variant={confirmVariant}
-                  onClick={() => {
-                    onConfirm();
-                    onClose();
-                  }}
-                  ref={initialFocusRef}
-                >
-                  {confirmText ?? t('components:confirmModal.confirmText')}
-                </Button>
-              </ButtonGroup>
-            </ModalFooter>
-          </ModalContent>
-        </Portal>
-      </Modal>
+            </Text>
+          </Stack>
+
+          <ButtonGroup
+            justifyContent="space-between"
+            w="full"
+            spacing={0}
+            gap={4}
+            size={{ base: 'lg', sm: 'md' }}
+            flexDirection={{ base: 'column-reverse', sm: 'row' }}
+          >
+            <Button onClick={confirmModal.onClose}>
+              {cancelText ?? t('common:actions.cancel')}
+            </Button>
+            <Button
+              variant={confirmVariant}
+              onClick={() => {
+                onConfirm();
+                confirmModal.onClose();
+              }}
+            >
+              {confirmText ?? t('components:confirmModal.confirmText')}
+            </Button>
+          </ButtonGroup>
+        </Stack>
+      </SheetModal>
     </>
   );
 };

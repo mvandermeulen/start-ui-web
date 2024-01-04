@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Box, Button, Stack } from '@chakra-ui/react';
-import { Formiz } from '@formiz/core';
+import { Formiz, useForm } from '@formiz/core';
 
 import { FieldSelect } from '.';
 
@@ -15,58 +15,165 @@ export default {
   title: 'Fields/FieldSelect',
 };
 
-export const Default = () => (
-  <Formiz autoForm onChange={console.log}>
-    <Stack spacing={4}>
-      <FieldSelect
-        name="colors"
-        label="Colors"
-        placeholder="Placeholder"
-        helper="This is an helper"
-        required="Color is required"
-        options={colors}
-      />
-      <Box>
-        <Button type="submit">Submit</Button>
-      </Box>
-    </Stack>
-  </Formiz>
-);
+export const Default = () => {
+  const form = useForm({ onSubmit: console.log });
+  return (
+    <Formiz connect={form} autoForm>
+      <Stack spacing={4}>
+        <FieldSelect
+          name="colors"
+          label="Colors"
+          placeholder="Placeholder"
+          helper="This is an helper"
+          required="Color is required"
+          options={colors}
+        />
+        <Box>
+          <Button type="submit">Submit</Button>
+        </Box>
+      </Stack>
+    </Formiz>
+  );
+};
 
-export const Disabled = () => (
-  <Formiz autoForm onChange={console.log}>
-    <Stack spacing={4}>
-      <FieldSelect
-        name="colors"
-        label="Colors"
-        placeholder="Placeholder"
-        helper="This is an helper"
-        options={colors}
-        isDisabled
-      />
-      <Box>
-        <Button type="submit">Submit</Button>
-      </Box>
-    </Stack>
-  </Formiz>
-);
+export const Disabled = () => {
+  const form = useForm({ onSubmit: console.log });
+  return (
+    <Formiz connect={form} autoForm>
+      <Stack spacing={4}>
+        <FieldSelect
+          name="colors"
+          label="Colors"
+          placeholder="Placeholder"
+          helper="This is an helper"
+          options={colors}
+          isDisabled
+        />
+        <Box>
+          <Button type="submit">Submit</Button>
+        </Box>
+      </Stack>
+    </Formiz>
+  );
+};
 
-export const DefaultValue = () => (
-  <Formiz autoForm onChange={console.log}>
-    <Stack spacing={4}>
-      <FieldSelect
-        name="colors"
-        label="Colors"
-        placeholder="Placeholder"
-        helper="This is an helper"
-        required="Color is required"
-        defaultValue={colors[0]?.value}
-        options={colors}
-        selectProps={{ isClearable: true }}
-      />
-      <Box>
-        <Button type="submit">Submit</Button>
-      </Box>
-    </Stack>
-  </Formiz>
-);
+export const DefaultValue = () => {
+  const form = useForm({ onSubmit: console.log });
+  return (
+    <Formiz connect={form} autoForm>
+      <Stack spacing={4}>
+        <FieldSelect
+          name="colors"
+          label="Colors"
+          placeholder="Placeholder"
+          helper="This is an helper"
+          required="Color is required"
+          defaultValue={colors[0]?.value}
+          options={colors}
+          selectProps={{ isClearable: true }}
+        />
+        <Box>
+          <Button type="submit">Submit</Button>
+        </Box>
+      </Stack>
+    </Formiz>
+  );
+};
+
+export const OptionsColorScheme = () => {
+  const form = useForm<{ colors: string }>({ onSubmit: console.log });
+
+  return (
+    <Formiz connect={form} autoForm>
+      <Stack spacing={4}>
+        <FieldSelect
+          name="colors"
+          label="Colors"
+          placeholder="Placeholder"
+          helper="This is an helper"
+          required="Color is required"
+          options={colors}
+          selectProps={{
+            isClearable: true,
+            selectedOptionColorScheme: 'red',
+          }}
+        />
+        <Box>
+          <Button type="submit">Submit</Button>
+        </Box>
+      </Stack>
+    </Formiz>
+  );
+};
+
+export const CreateableMultiSelect = () => {
+  const form = useForm({ onSubmit: console.log });
+  return (
+    <Formiz connect={form} autoForm>
+      <Stack spacing={4}>
+        <FieldSelect
+          name="colors"
+          label="Colors"
+          placeholder="Placeholder"
+          helper="This is an helper"
+          required="Color is required"
+          options={colors}
+          selectProps={{ isMulti: true, type: 'creatable' }}
+        />
+        <Box>
+          <Button type="submit">Submit</Button>
+        </Box>
+      </Stack>
+    </Formiz>
+  );
+};
+
+export const DefaultValueCreateableMultiSelect = () => {
+  const form = useForm({
+    onSubmit: console.log,
+  });
+  return (
+    <Formiz connect={form} autoForm>
+      <Stack spacing={4}>
+        <FieldSelect
+          name="colors"
+          label="Colors"
+          placeholder="Placeholder"
+          helper="This is an helper"
+          required="Color is required"
+          options={colors}
+          defaultValue={['red', 'blue']}
+          selectProps={{ isMulti: true, type: 'creatable' }}
+        />
+        <Box>
+          <Button type="submit">Submit</Button>
+        </Box>
+      </Stack>
+    </Formiz>
+  );
+};
+
+export const InitialValuesCreateableMultiSelect = () => {
+  const form = useForm({
+    onSubmit: console.log,
+    initialValues: { colors: ['red', 'blue'] },
+  });
+  return (
+    <Formiz connect={form} autoForm>
+      <Stack spacing={4}>
+        <FieldSelect
+          name="colors"
+          label="Colors"
+          placeholder="Placeholder"
+          helper="This is an helper"
+          required="Color is required"
+          options={colors}
+          selectProps={{ isMulti: true, type: 'creatable' }}
+        />
+        <Box>
+          <Button type="submit">Submit</Button>
+        </Box>
+      </Stack>
+    </Formiz>
+  );
+};

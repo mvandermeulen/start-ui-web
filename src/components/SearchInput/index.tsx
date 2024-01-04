@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 
 import {
+  Box,
   IconButton,
   Input,
   InputGroup,
@@ -11,7 +12,7 @@ import {
   useMergeRefs,
 } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { FiSearch, FiX } from 'react-icons/fi';
+import { LuSearch, LuX } from 'react-icons/lu';
 
 type CustomProps = {
   value?: string;
@@ -47,7 +48,7 @@ export const SearchInput = forwardRef<SearchInputProps, 'input'>(
     const inputRef = useRef<HTMLInputElement>();
     const refs = useMergeRefs(inputRef, ref);
 
-    const [search, setSearch] = useState<string>(externalValue as string);
+    const [search, setSearch] = useState<string>(externalValue);
 
     const searchRef = useRef(search);
     searchRef.current = search;
@@ -94,23 +95,21 @@ export const SearchInput = forwardRef<SearchInputProps, 'input'>(
           isDisabled={isDisabled}
           onKeyDown={handleEscape}
         />
-        <InputRightElement
-          color={isDisabled ? 'gray.300' : 'brand.600'}
-          _dark={{
-            color: isDisabled ? 'gray.600' : 'brand.300',
-          }}
-        >
+        <InputRightElement pointerEvents="none">
           {!isDisabled && search ? (
             <IconButton
               onClick={handleClear}
               variant="@secondary"
               size="xs"
               aria-label={clearLabel ?? t('components:searchInput.clear')}
+              pointerEvents="auto"
             >
-              <FiX />
+              <LuX />
             </IconButton>
           ) : (
-            <FiSearch />
+            <Box pointerEvents="none" opacity={isDisabled ? 0.3 : undefined}>
+              <LuSearch />
+            </Box>
           )}
         </InputRightElement>
       </InputGroup>

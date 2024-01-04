@@ -16,9 +16,10 @@ import {
   Text,
   useBreakpointValue,
 } from '@chakra-ui/react';
-import { FiChevronDown } from 'react-icons/fi';
+import { LuChevronDown } from 'react-icons/lu';
 
 import { Icon } from '@/components/Icons';
+import { useIsHydrated } from '@/hooks/useIsHydrated';
 
 type NavContextValue = {
   active: ReactNode;
@@ -38,6 +39,7 @@ type NavProps = React.PropsWithChildren<MenuProps> & {
 };
 
 export const Nav = ({ children, breakpoint = 'lg', ...rest }: NavProps) => {
+  const isHydrated = useIsHydrated();
   const isMenu = useBreakpointValue({
     base: true,
     [breakpoint]: false,
@@ -47,13 +49,18 @@ export const Nav = ({ children, breakpoint = 'lg', ...rest }: NavProps) => {
   return (
     <NavContext.Provider value={{ active, setActive, isMenu: !!isMenu }}>
       <Menu matchWidth {...rest}>
-        {!isMenu && <Stack spacing="1">{children}</Stack>}
+        {!isMenu && (
+          <Stack spacing="1" opacity={!isHydrated ? 0 : undefined}>
+            {children}
+          </Stack>
+        )}
         {isMenu && (
           <>
             <MenuButton
+              opacity={!isHydrated ? 0 : undefined}
               textAlign="left"
               as={Button}
-              rightIcon={<FiChevronDown />}
+              rightIcon={<LuChevronDown />}
               sx={{ '> *': { minW: 0 } }}
             >
               {active}
@@ -80,7 +87,7 @@ export const NavItem: ChakraComponent<'span', NavItemProps> = ({
   ...rest
 }) => {
   const { setActive, isMenu } = useNavContext();
-  const Item = isMenu ? MenuItem : Flex;
+  const Item: TODO = isMenu ? MenuItem : Flex;
 
   const itemContent = useMemo(
     () => (
@@ -112,25 +119,34 @@ export const NavItem: ChakraComponent<'span', NavItemProps> = ({
   return (
     <Item
       px="3"
-      py="2"
+      py="1"
       borderRadius={isMenu ? undefined : 'md'}
       transition="0.2s"
       fontSize="sm"
       fontWeight="bold"
       bg={isActive ? 'white' : 'transparent'}
+      border="1px solid transparent"
+      boxShadow={isActive ? 'card' : undefined}
       color={isActive ? 'gray.700' : 'gray.600'}
+      borderColor={isActive ? 'gray.100' : undefined}
+      borderLeft={isMenu ? 'none' : undefined}
+      borderRight={isMenu ? 'none' : undefined}
       _dark={{
-        color: isActive ? 'white' : 'gray.300',
-        bg: isActive ? 'blackAlpha.300' : 'transparent',
+        color: isActive ? 'white' : 'gray.100',
+        borderColor: isActive ? 'gray.800' : undefined,
+        bg: isActive ? 'gray.800' : 'transparent',
       }}
       _hover={
         !isActive && !isMenu
           ? {
               bg: 'white',
               color: 'gray.700',
+              boxShadow: 'card',
+              borderColor: 'gray.100',
               _dark: {
-                bg: 'blackAlpha.300',
+                bg: 'gray.700',
                 color: 'gray.100',
+                borderColor: 'gray.800',
               },
             }
           : {}
@@ -164,8 +180,7 @@ export const NavGroup: FC<React.PropsWithChildren<FlexProps>> = ({
         px="3"
         pt="6"
         pb="2"
-        color="gray.500"
-        _dark={{ color: 'gray.300' }}
+        color="text-dimmed"
         {...rest}
       >
         {title}

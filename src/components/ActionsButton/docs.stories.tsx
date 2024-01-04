@@ -9,7 +9,8 @@ import {
   MenuItem,
   MenuList,
 } from '@chakra-ui/react';
-import { FiCopy, FiEdit, FiTrash2, FiUserPlus } from 'react-icons/fi';
+import { StoryFn } from '@storybook/react';
+import { LuCopy, LuPenLine, LuTrash2, LuUserPlus } from 'react-icons/lu';
 
 import { Icon } from '@/components/Icons';
 
@@ -31,26 +32,26 @@ export const UsageWithMenu = () => (
   <Menu isLazy placement="left-start">
     <MenuButton as={ActionsButton} />
     <MenuList>
-      <MenuItem icon={<Icon icon={FiEdit} fontSize="lg" color="gray.400" />}>
+      <MenuItem icon={<Icon icon={LuPenLine} fontSize="lg" color="gray.400" />}>
         Edit
       </MenuItem>
-      <MenuItem icon={<Icon icon={FiCopy} fontSize="lg" color="gray.400" />}>
+      <MenuItem icon={<Icon icon={LuCopy} fontSize="lg" color="gray.400" />}>
         Duplicate
       </MenuItem>
       <MenuItem
-        icon={<Icon icon={FiUserPlus} fontSize="lg" color="gray.400" />}
+        icon={<Icon icon={LuUserPlus} fontSize="lg" color="gray.400" />}
       >
         Share
       </MenuItem>
       <MenuDivider />
-      <MenuItem icon={<Icon icon={FiTrash2} fontSize="lg" color="gray.400" />}>
+      <MenuItem icon={<Icon icon={LuTrash2} fontSize="lg" color="gray.400" />}>
         Delete
       </MenuItem>
     </MenuList>
   </Menu>
 );
 UsageWithMenu.decorators = [
-  (Story: TODO) => (
+  (Story: StoryFn) => (
     <Flex h="12rem" justify="flex-end">
       <Story />
     </Flex>

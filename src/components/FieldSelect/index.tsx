@@ -1,16 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 
 import { FieldProps, useField } from '@formiz/core';
-import { GroupBase } from 'react-select';
+import { GroupBase, MultiValue, SingleValue } from 'react-select';
 
 import { FormGroup, FormGroupProps } from '@/components/FormGroup';
 import { Select, SelectProps } from '@/components/Select';
 
 export type FieldSelectProps<
-  Option,
+  Option extends { label: ReactNode; value: unknown },
   IsMulti extends boolean = false,
-  Group extends GroupBase<Option> = GroupBase<Option>
-> = FieldProps &
+  Group extends GroupBase<Option> = GroupBase<Option>,
+> = FieldProps<
+  IsMulti extends true ? Array<Option['value']> : Option['value']
+> &
   FormGroupProps & {
     placeholder?: string;
     size?: 'sm' | 'md' | 'lg';
@@ -21,9 +23,9 @@ export type FieldSelectProps<
   };
 
 export const FieldSelect = <
-  Option,
+  Option extends { label: ReactNode; value: unknown },
   IsMulti extends boolean = false,
-  Group extends GroupBase<Option> = GroupBase<Option>
+  Group extends GroupBase<Option> = GroupBase<Option>,
 >(
   props: FieldSelectProps<Option, IsMulti, Group>
 ) => {
@@ -37,7 +39,7 @@ export const FieldSelect = <
     setValue,
     value,
     otherProps,
-  } = useField({ debounce: 0, ...props });
+  } = useField(props);
   const { required } = props;
   const {
     children,
@@ -51,10 +53,7 @@ export const FieldSelect = <
     size = 'md',
     selectProps,
     ...rest
-  } = otherProps as Omit<
-    FieldSelectProps<Option, IsMulti, Group>,
-    keyof FieldProps
-  >;
+  } = otherProps;
   const [isTouched, setIsTouched] = useState(false);
   const showError = !isValid && ((isTouched && !isPristine) || isSubmitted);
 
@@ -73,28 +72,63 @@ export const FieldSelect = <
     ...rest,
   };
 
+  // If we are in creatable mode, the onChange will add values to the Formiz value state
+  // value is an Array so we filter the options to make sure we don't double it in the "label" section
+  const getCreatedValues = () =>
+    Array.isArray(value) &&
+    (selectProps?.type === 'creatable' ||
+      selectProps?.type === 'async-creatable')
+      ? value
+          // We do not want already available options, so we filter them.
+          .filter((v) => !options.map((o) => o.value).includes(v))
+          // We need to map the created values so they match the Option format
+          .map((v) => ({ label: v, value: v }) as Option)
+      : [];
+
+  // We compute the final value.
+  // If the FieldSelect is in multi mode, the value is an Array
+  // If the FieldSelect is not in multi mode, then the value is a single element
+  const finalValue = Array.isArray(value)
+    ? [
+        ...(options?.filter((option) => value.includes(option.value)) ?? []),
+        ...getCreatedValues(),
+      ]
+    : options?.find((option) => option.value === value) ?? undefined;
+
   return (
     <FormGroup {...formGroupProps}>
-      <Select
+      <Select<Option, IsMulti, Group>
         id={id}
-        value={
-          options?.find((option: TODO) => option.value === value) ?? undefined
-        }
+        value={finalValue}
         onFocus={() => setIsTouched(false)}
         onBlur={() => setIsTouched(true)}
         placeholder={placeholder || 'Select...'}
-        onChange={(fieldValue: TODO) =>
-          setValue(fieldValue ? fieldValue.value : null)
-        }
+        onChange={(fieldValue) => {
+          if (isMultiValue<Option>(fieldValue)) {
+            setValue(
+              fieldValue.length
+                ? (fieldValue.map((f) => f.value) as TODO)
+                : null
+            );
+          } else {
+            setValue(fieldValue ? (fieldValue.value as TODO) : null);
+          }
+        }}
         size={size}
         options={options}
         isDisabled={isDisabled}
         isClearable={isClearable}
         isSearchable={isSearchable}
-        isError={showError}
+        isInvalid={showError}
         {...selectProps}
       />
       {children}
     </FormGroup>
   );
 };
+
+function isMultiValue<Option extends { label: ReactNode; value: unknown }>(
+  value: MultiValue<Option> | SingleValue<Option>
+): value is MultiValue<Option> {
+  return Array.isArray(value);
+}
